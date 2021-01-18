@@ -31,12 +31,8 @@ func (a *Accounting) GetTotal(start, end time.Time) (total float64) {
 		}
 
 		// 判斷開始時間有沒有在預算第一天之後
-		budgetFisrtDay, err := time.Parse("20060102", budget.YearMonth+"01")
-		if err != nil {
-			log.Println("[ 判斷預算第一天轉型失敗 ] Err:", err)
-			continue
-		}
-		if start.Before(budgetFisrtDay) {
+
+		if start.Before(budget.FirstDay()) {
 			return 0
 		}
 

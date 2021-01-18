@@ -1,5 +1,10 @@
 package business
 
+import (
+	"log"
+	"time"
+)
+
 // Budget 預算
 type Budget struct {
 	YearMonth string
@@ -18,4 +23,16 @@ func GetBudgets() (budgets []Budget) {
 func (b *Budget) DailyAmount() float64 {
 
 	return b.Amount / 30
+}
+
+// FirstDay 預算第一天
+func (b *Budget) FirstDay() (firstDay time.Time) {
+	var err error
+	firstDay, err = time.Parse("20060102", b.YearMonth+"01")
+	if err != nil {
+		log.Println("[ 判斷預算第一天轉型失敗 ] Err:", err)
+		return
+	}
+
+	return
 }
