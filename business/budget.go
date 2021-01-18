@@ -36,3 +36,16 @@ func (b *Budget) FirstDay() (firstDay time.Time) {
 
 	return
 }
+
+// LastDay 預算最後一天
+func (b *Budget) LastDay() (lastDay time.Time) {
+
+	var err error
+	lastDay, err = time.Parse("20060102", b.YearMonth+"30")
+	if err != nil {
+		log.Println("[ 判斷預算最後一天轉型失敗 ] Err:", err)
+		return
+	}
+
+	return
+}
