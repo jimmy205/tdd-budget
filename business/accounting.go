@@ -6,8 +6,8 @@ import "time"
 type Accounting struct {
 }
 
-// NewAccount 新的計算組
-func NewAccount() *Accounting {
+// NewAccounting 新的計算組
+func NewAccounting() *Accounting {
 	return &Accounting{}
 }
 
