@@ -16,8 +16,11 @@ type AccountingSuite struct {
 func TestSuiteInit(t *testing.T) {
 	suite.Run(t, new(AccountingSuite))
 }
+
 func (at *AccountingSuite) Test_GetTotal() {
 	start, _ := time.Parse("2006-01-02", "2021-04-01")
 	end, _ := time.Parse("2006-01-02", "2021-04-01")
+
+	at.Accounting = NewAccount()
 	at.Equal(float64(0), at.Accounting.GetTotal(start, end))
 }

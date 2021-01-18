@@ -6,6 +6,11 @@ import "time"
 type Accounting struct {
 }
 
+// NewAccount 新的計算組
+func NewAccount() *Accounting {
+	return &Accounting{}
+}
+
 // GetTotal 取得所有預算
 func (a *Accounting) GetTotal(start, end time.Time) (total float64) {
 
