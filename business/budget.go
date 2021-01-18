@@ -13,3 +13,9 @@ func GetBudgets() (budgets []Budget) {
 
 	return
 }
+
+// DailyAmount 取得每日金額
+func (b *Budget) DailyAmount() float64 {
+
+	return b.Amount / 30
+}

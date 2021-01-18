@@ -18,8 +18,12 @@ func (a *Accounting) GetTotal(start, end time.Time) (total float64) {
 
 	budgets := GetBudgets()
 	for _, budget := range budgets {
-		return (end.Sub(start).Hours()/24 + 1) * budget.Amount / 30
+		return a.periodDiff(start, end) * budget.DailyAmount()
 	}
 
 	return 0
+}
+
+func (a *Accounting) periodDiff(start, end time.Time) float64 {
+	return end.Sub(start).Hours()/24 + 1
 }
