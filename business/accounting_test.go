@@ -40,6 +40,17 @@ func (at *AccountingSuite) Test_period_inside_budget_month() {
 	at.totalShouldBe(start, end, 3000)
 }
 
+func (at *AccountingSuite) Test_period_inside_month() {
+
+	// mock
+	mock := at.mockGetBudgets(map[string]float64{"202104": 30})
+	defer mock.Unpatch()
+
+	start, end := at.setStartEnd("2021-04-01", "2021-04-01")
+	at.totalShouldBe(start, end, 1)
+
+}
+
 func (at *AccountingSuite) totalShouldBe(start, end time.Time, expected float64) {
 	at.Equal(expected, at.Accounting.GetTotal(start, end))
 }
