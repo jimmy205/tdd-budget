@@ -1,6 +1,8 @@
 package business
 
-import "time"
+import (
+	"time"
+)
 
 // Accounting 計算組
 type Accounting struct {
@@ -13,6 +15,11 @@ func NewAccounting() *Accounting {
 
 // GetTotal 取得所有預算
 func (a *Accounting) GetTotal(start, end time.Time) (total float64) {
+
+	budgets := GetBudgets()
+	for _, budget := range budgets {
+		return budget.Amount
+	}
 
 	return 0
 }

@@ -4,6 +4,8 @@ import (
 	"testing"
 	"time"
 
+	"bou.ke/monkey"
+
 	"github.com/stretchr/testify/suite"
 )
 
@@ -31,6 +33,14 @@ func (at *AccountingSuite) Test_no_budget() {
 func (at *AccountingSuite) Test_period_inside_budget_month() {
 	start, _ := time.Parse("2006-01-02", "2021-04-01")
 	end, _ := time.Parse("2006-01-02", "2021-04-30")
+
+	// mock
+	monkey.Patch(GetBudgets, func() []Budget {
+		budgets := []Budget{
+			{"202004", 3000},
+		}
+		return budgets
+	})
 
 	at.totalShouldBe(start, end, 3000)
 }
