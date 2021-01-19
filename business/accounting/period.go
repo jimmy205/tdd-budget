@@ -16,15 +16,6 @@ func newPeriod(start, end time.Time) *Period {
 	}
 }
 
-// 期間相差幾天
-func (p *Period) diff() float64 {
-	return p.end.Sub(p.start).Hours()/24 + 1
-}
-
-func (p *Period) invalidPeriod() bool {
-	return p.end.Before(p.start)
-}
-
 func (p *Period) overlappingDay(another *Period) float64 {
 
 	if another.start.After(p.end) || another.end.Before(p.start) {
