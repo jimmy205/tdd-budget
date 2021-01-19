@@ -1,4 +1,4 @@
-package business
+package accounting
 
 import (
 	"log"
