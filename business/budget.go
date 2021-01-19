@@ -87,5 +87,10 @@ func (b *Budget) overlappingAmount(period *Period) float64 {
 		start = b.firstDay()
 	}
 
-	return (period.end.Sub(start).Hours()/24 + 1) * b.dailyAmount()
+	end := period.end
+	if b.lastDay().Before(period.end) {
+		end = b.lastDay()
+	}
+
+	return (end.Sub(start).Hours()/24 + 1) * b.dailyAmount()
 }
