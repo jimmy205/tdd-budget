@@ -69,6 +69,11 @@ func (b *Budget) totalDay() int {
 
 func (b *Budget) overlappingAmount(start, end time.Time) float64 {
 
+	// 判斷是不是非法時間
+	if end.Before(start) {
+		return 0
+	}
+
 	// 判斷結束時間有沒有在預算最後一天之後
 	if end.After(b.LastDay()) || start.Before(b.FirstDay()) {
 		return 0

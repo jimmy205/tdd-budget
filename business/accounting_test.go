@@ -69,6 +69,15 @@ func (at *AccountingSuite) Test_period_no_overlapping_last_day() {
 	at.totalShouldBe(start, end, 0)
 }
 
+func (at *AccountingSuite) Test_invalid_period() {
+	// mock
+	mock := at.mockGetBudgets(map[string]float64{"202104": 30})
+	defer mock.Unpatch()
+
+	start, end := at.setStartEnd("2021-05-30", "2021-05-01")
+	at.totalShouldBe(start, end, 0)
+}
+
 func (at *AccountingSuite) totalShouldBe(start, end time.Time, expected float64) {
 	at.Equal(expected, at.Accounting.GetTotal(start, end))
 }
