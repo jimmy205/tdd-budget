@@ -16,11 +16,14 @@ func NewAccounting() *Accounting {
 // GetTotal 取得所有預算
 func (a *Accounting) GetTotal(start, end time.Time) (total float64) {
 
-	budgets := GetBudgets()
+	budgets := getBudgets()
+
 	for _, budget := range budgets {
-		period := NewPeriod(start, end)
-		return budget.overlappingAmount(period)
+		period := newPeriod(start, end)
+		another := newPeriod(budget.first, budget.last)
+
+		total += period.overlappingDay(another) * budget.dailyAmount()
 	}
 
-	return 0
+	return total
 }

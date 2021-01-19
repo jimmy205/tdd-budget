@@ -2,6 +2,7 @@ package business
 
 import (
 	"log"
+	"tddbudget/repository"
 	"testing"
 	"time"
 
@@ -32,17 +33,15 @@ func (at *AccountingSuite) Test_no_budget() {
 
 func (at *AccountingSuite) Test_period_inside_budget_month() {
 
-	// mock
-	mock := at.mockGetBudgets(map[string]float64{"202104": 3000})
+	mock := at.mockGetBudgets(map[string]float64{"202104": 30})
 	defer mock.Unpatch()
 
 	start, end := at.setStartEnd("2021-04-01", "2021-04-30")
-	at.totalShouldBe(start, end, 3000)
+	at.totalShouldBe(start, end, 30)
 }
 
 func (at *AccountingSuite) Test_period_inside_month() {
 
-	// mock
 	mock := at.mockGetBudgets(map[string]float64{"202104": 30})
 	defer mock.Unpatch()
 
@@ -52,7 +51,7 @@ func (at *AccountingSuite) Test_period_inside_month() {
 }
 
 func (at *AccountingSuite) Test_period_no_overlapping_first_day() {
-	// mock
+
 	mock := at.mockGetBudgets(map[string]float64{"202104": 30})
 	defer mock.Unpatch()
 
@@ -61,7 +60,7 @@ func (at *AccountingSuite) Test_period_no_overlapping_first_day() {
 }
 
 func (at *AccountingSuite) Test_period_no_overlapping_last_day() {
-	// mock
+
 	mock := at.mockGetBudgets(map[string]float64{"202104": 30})
 	defer mock.Unpatch()
 
@@ -70,7 +69,7 @@ func (at *AccountingSuite) Test_period_no_overlapping_last_day() {
 }
 
 func (at *AccountingSuite) Test_invalid_period() {
-	// mock
+
 	mock := at.mockGetBudgets(map[string]float64{"202104": 30})
 	defer mock.Unpatch()
 
@@ -79,7 +78,7 @@ func (at *AccountingSuite) Test_invalid_period() {
 }
 
 func (at *AccountingSuite) Test_period_ovelapping_budget_first_day() {
-	// mock
+
 	mock := at.mockGetBudgets(map[string]float64{"202104": 30})
 	defer mock.Unpatch()
 
@@ -88,12 +87,43 @@ func (at *AccountingSuite) Test_period_ovelapping_budget_first_day() {
 }
 
 func (at *AccountingSuite) Test_period_ovelapping_budget_last_day() {
-	// mock
+
 	mock := at.mockGetBudgets(map[string]float64{"202104": 30})
 	defer mock.Unpatch()
 
 	start, end := at.setStartEnd("2021-04-28", "2021-05-02")
 	at.totalShouldBe(start, end, 3)
+}
+
+func (at *AccountingSuite) Test_daily_budget_10() {
+
+	mock := at.mockGetBudgets(map[string]float64{"202104": 300})
+	defer mock.Unpatch()
+
+	start, end := at.setStartEnd("2021-04-01", "2021-04-03")
+	at.totalShouldBe(start, end, 30)
+}
+
+func (at *AccountingSuite) Test_cross_2_month() {
+
+	mock := at.mockGetBudgets(map[string]float64{"202104": 30, "202105": 310})
+	defer mock.Unpatch()
+
+	start, end := at.setStartEnd("2021-04-01", "2021-05-02")
+	at.totalShouldBe(start, end, 30+20)
+}
+
+func (at *AccountingSuite) Test_cross_3_month() {
+
+	mock := at.mockGetBudgets(map[string]float64{
+		"202104": 30,
+		"202105": 310,
+		"202106": 3000,
+	})
+	defer mock.Unpatch()
+
+	start, end := at.setStartEnd("2021-04-01", "2021-06-02")
+	at.totalShouldBe(start, end, 30+310+200)
 }
 
 func (at *AccountingSuite) totalShouldBe(start, end time.Time, expected float64) {
@@ -102,11 +132,8 @@ func (at *AccountingSuite) totalShouldBe(start, end time.Time, expected float64)
 
 func (at *AccountingSuite) mockGetBudgets(mockData map[string]float64) *monkey.PatchGuard {
 
-	mock := monkey.Patch(GetBudgets, func() (budgets []Budget) {
-		for yearMonth, amount := range mockData {
-			budgets = append(budgets, Budget{yearMonth, amount})
-		}
-		return budgets
+	mock := monkey.Patch(repository.GetBudgets, func() map[string]float64 {
+		return mockData
 	})
 
 	return mock
