@@ -20,14 +20,14 @@ func GetBudgets() (budgets []Budget) {
 	return
 }
 
-// DailyAmount 取得每日金額
-func (b *Budget) DailyAmount() float64 {
+// dailyAmount 取得每日金額
+func (b *Budget) dailyAmount() float64 {
 
 	return b.Amount / float64(b.totalDay())
 }
 
-// FirstDay 預算第一天
-func (b *Budget) FirstDay() (firstDay time.Time) {
+// firstDay 預算第一天
+func (b *Budget) firstDay() (firstDay time.Time) {
 
 	var err error
 	firstDay, err = time.Parse("20060102", b.YearMonth+"01")
@@ -39,8 +39,8 @@ func (b *Budget) FirstDay() (firstDay time.Time) {
 	return
 }
 
-// LastDay 預算最後一天
-func (b *Budget) LastDay() (lastDay time.Time) {
+// lastDay 預算最後一天
+func (b *Budget) lastDay() (lastDay time.Time) {
 
 	var err error
 	lastDay, err = time.Parse(
@@ -67,21 +67,25 @@ func (b *Budget) totalDay() int {
 	return d.Day()
 }
 
-func (b *Budget) overlappingAmount(start, end time.Time) float64 {
+func (b *Budget) overlappingAmount(period *Period) float64 {
 
 	// 判斷是不是非法時間
-	if end.Before(start) {
+	if period.invalidPeriod() {
 		return 0
 	}
 
-	// 判斷結束時間有沒有在預算最後一天之後
-	if end.After(b.LastDay()) || start.Before(b.FirstDay()) {
+	if b.firstDay().After(period.end) {
 		return 0
 	}
 
-	return b.periodDiff(start, end) * b.DailyAmount()
-}
+	if period.start.After(b.lastDay()) {
+		return 0
+	}
 
-func (b *Budget) periodDiff(start, end time.Time) float64 {
-	return end.Sub(start).Hours()/24 + 1
+	start := period.start
+	if b.firstDay().After(period.start) {
+		start = b.firstDay()
+	}
+
+	return (period.end.Sub(start).Hours()/24 + 1) * b.dailyAmount()
 }

@@ -18,7 +18,8 @@ func (a *Accounting) GetTotal(start, end time.Time) (total float64) {
 
 	budgets := GetBudgets()
 	for _, budget := range budgets {
-		return budget.overlappingAmount(start, end)
+		period := NewPeriod(start, end)
+		return budget.overlappingAmount(period)
 	}
 
 	return 0
