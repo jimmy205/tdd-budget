@@ -15,7 +15,7 @@ type Budget struct {
 }
 
 // getBudgets 取得預算
-func getBudgets() (budgets []Budget) {
+func getBudgets() (budgets []*Budget) {
 
 	data := repository.GetBudgets()
 	for yearMonth, amount := range data {
@@ -36,7 +36,7 @@ func getBudgets() (budgets []Budget) {
 
 		last := time.Date(date.Year(), date.Month()+1, 0, 0, 0, 0, 0, time.UTC)
 
-		budgets = append(budgets, Budget{yearMonth, amount, first, last})
+		budgets = append(budgets, &Budget{yearMonth, amount, first, last})
 	}
 
 	return
